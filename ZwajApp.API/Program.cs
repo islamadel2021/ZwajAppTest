@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using ZwajApp.API.Data;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer; // 🔥 عشان الـ JwtBearerDefaults يشتغل
+using Microsoft.IdentityModel.Tokens; // 🔥 عشان الـ TokenValidationParameters والـ SymmetricSecurityKey يشتغلوا
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +26,21 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
+                .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value!)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
+    
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,6 +51,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAngularApp"); // تفعيل السياسة هنا بالظبط!
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
