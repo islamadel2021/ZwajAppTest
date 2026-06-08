@@ -37,7 +37,7 @@
       <a class="nav-link" href="#">دردشة</a>
     </li>
   </ul>
-  @if (authService.isLoggedIn()) {
+  @if (authService.loggedIn()) {
     <div class="dropdown">
       <a
         style="
@@ -51,7 +51,7 @@
         data-toggle="dropdown"
         aria-expanded="false"
       >
-        مرحبا بك
+        مرحبا {{ authService.decodedToken?.unique_name | titlecase }}
       </a>
 
       <ul class="dropdown-menu dropdown-menu-end">
@@ -73,7 +73,7 @@
   }
 
   <!-- ✅ Form تظهر لما يكون مش مسجل دخول -->
-  @if (!authService.isLoggedIn()) {
+  @if (!authService.loggedIn()) {
     <form
       #loginForm="ngForm"
       class="form-inline my-2 my-lg-0"

@@ -3,6 +3,7 @@
 import { Component, OnInit, output, inject, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../_services/auth.service';
+import { AlertifyService } from '../_services/alertify.service';
 
 @Component({
   selector: 'app-register',
@@ -20,23 +21,24 @@ export class RegisterComponent implements OnInit {
   cancelRegister = output<boolean>();
 
   private authService = inject(AuthService);
+  private alertify = inject(AlertifyService);
 
   ngOnInit(): void {}
 
   register() {
     this.authService.register(this.model).subscribe({
       next: () => {
-        console.log('تم التسجيل بنجاح');
+        this.alertify.success('تم التسجيل بنجاح');
         this.cancelRegister.emit(false);
       },
       error: (err) => {
-        console.error('خطأ في التسجيل:', err);
+        this.alertify.error('خطأ في التسجيل:' + err);
       },
     });
   }
 
   cancel() {
     this.cancelRegister.emit(false); // ✅ يبعت إشارة للـ parent
-    console.log('ليس الأن');
+    this.alertify.message('تم إلغاء التسجيل');
   }
 }

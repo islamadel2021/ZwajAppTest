@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { errorInterceptor } from './_services/error.interceptor';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -11,5 +12,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     // ✅ بدل ErrorInterceptorProvider
     provideHttpClient(withInterceptors([errorInterceptor])),
+    provideAnimations(), // ✅ مطلوب لـ ngx-bootstrap
   ],
 };

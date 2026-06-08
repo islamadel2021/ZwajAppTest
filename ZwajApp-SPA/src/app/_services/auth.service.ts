@@ -2,6 +2,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +12,19 @@ export class AuthService {
 
   private http = inject(HttpClient);
 
-  private token = signal<string | null>(localStorage.getItem('token'));
+  jwtHelper = new JwtHelperService();
+  decodedToken: any;
 
-  // computed signal بيرجع true/false
-  isLoggedIn = computed(() => !!this.token());
+  // ✅ computed signal بيستخدم JwtHelper
+  // ✅ بدل computed signal، هنستخدم method عادية مع try/catch
+  loggedIn(): boolean {
+    try {
+      const token = localStorage.getItem('token');
+      return !this.jwtHelper.isTokenExpired(token);
+    } catch {
+      return false;
+    }
+  }
 
   login(model: { username: string; password: string }) {
     return this.http
@@ -23,7 +33,8 @@ export class AuthService {
         tap((response) => {
           if (response?.token) {
             localStorage.setItem('token', response.token);
-            this.token.set(response.token);
+            this.decodedToken = this.jwtHelper.decodeToken(response.token);
+            console.log(this.decodedToken);
           }
         }),
       );
@@ -43,7 +54,6 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
-    this.token.set(null); // ✅ نمسح الـ signal
     console.log('تم الخروج');
   }
 }
