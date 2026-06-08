@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../_services/auth.service';
 import { AlertifyService } from '../_services/alertify.service';
 import { TitleCasePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav',
@@ -18,6 +19,7 @@ export class NavComponent implements OnInit {
 
   authService = inject(AuthService);
   private alertify = inject(AlertifyService);
+  private router = inject(Router); // ✅ inject بدل constructor
 
   ngOnInit(): void {}
 
@@ -25,6 +27,7 @@ export class NavComponent implements OnInit {
     this.authService.login(this.model).subscribe({
       next: () => {
         this.alertify.success('تم الدخول بنجاح');
+        this.router.navigate(['/members']); // ✅ navigate بعد اللوجين
       },
       error: (error) => {
         this.alertify.error(error);
@@ -35,5 +38,6 @@ export class NavComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.alertify.message('تم تسجيل الخروج');
+    this.router.navigate(['']); // ✅ navigate بعد اللوج اوت
   }
 }
