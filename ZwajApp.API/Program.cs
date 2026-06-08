@@ -2,7 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using ZwajApp.API.Data;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer; // 🔥 عشان الـ JwtBearerDefaults يشتغل
-using Microsoft.IdentityModel.Tokens; // 🔥 عشان الـ TokenValidationParameters والـ SymmetricSecurityKey يشتغلوا
+using Microsoft.IdentityModel.Tokens;
+using System.Net;
+using Microsoft.AspNetCore.Diagnostics;
+using ZwajApp.API.Helpers; // 🔥 عشان الـ TokenValidationParameters والـ SymmetricSecurityKey يشتغلوا
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,7 +49,31 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+        app.UseDeveloperExceptionPage();
+
     app.MapOpenApi();
+     app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "v1");
+    });
+}
+else
+{
+       app.UseExceptionHandler(builder =>
+    {
+        builder.Run(async context =>
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            
+            var error = context.Features.Get<IExceptionHandlerFeature>();
+            
+            if (error != null)
+            {
+                context.Response.AddApplicationError(error.Error.Message);
+                await context.Response.WriteAsync(error.Error.Message);
+            }
+        });
+    });
 }
 
 app.UseHttpsRedirection();

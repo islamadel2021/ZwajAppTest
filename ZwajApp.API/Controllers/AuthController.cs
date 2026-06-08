@@ -53,7 +53,8 @@ private readonly IConfiguration _config;
 
         [HttpPost("login")]
 public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
-{
+        {
+    throw new Exception("خطأ تجريبي"); // 🔥 عشان نختبر الـ Global Error Handling
     // 1. التشييك على الحساب من الـ Repository
     var userFromRepo = await _repo.Login(userForLoginDto.UserName.ToLower(), userForLoginDto.Password);
 
