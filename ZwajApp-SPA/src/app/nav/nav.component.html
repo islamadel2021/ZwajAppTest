@@ -1,0 +1,109 @@
+<nav class="rtl navbar navbar-expand-md navbar-dark bg-dark">
+  <a
+    style="
+      margin-top: -10px;
+      color: pink;
+      font-family: ToyorAljanah;
+      font-size: 2.25rem;
+      font-weight: bolder;
+    "
+    class="navbar-brand"
+    href="#"
+    ><i class="fa fa-heart" aria-hidden="true"></i>زواج<i
+      class="fa fa-heart"
+      aria-hidden="true"
+    ></i
+  ></a>
+
+  <ul
+    style="
+      letter-spacing: 1px;
+      font-weight: bold;
+      font-family: &quot;JF Flat&quot;;
+      font-size: 1.2rem;
+    "
+    class="navbar-nav mr-auto"
+  >
+    <li class="nav-item">
+      <a class="nav-link" href="#">الرئيسية </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">بحث</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">تواصل</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">دردشة</a>
+    </li>
+  </ul>
+  @if (authService.isLoggedIn()) {
+    <div class="dropdown">
+      <a
+        style="
+          letter-spacing: 1px;
+          font-weight: bold;
+          font-family: &quot;JF Flat&quot;;
+          font-size: 1.2rem;
+        "
+        class="dropdown-toggle text-light nav-link"
+        role="button"
+        data-toggle="dropdown"
+        aria-expanded="false"
+      >
+        مرحبا بك
+      </a>
+
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+          <a class="dropdown-item" href="#">
+            <i class="fa fa-user-o" aria-hidden="true"></i>
+            ملفي الشخصي
+          </a>
+        </li>
+        <li><hr class="dropdown-divider" /></li>
+        <li>
+          <a class="dropdown-item" href="#" (click)="logout()">
+            <i class="fa fa-sign-out" aria-hidden="true"></i>
+            تسجيل الخروج
+          </a>
+        </li>
+      </ul>
+    </div>
+  }
+
+  <!-- ✅ Form تظهر لما يكون مش مسجل دخول -->
+  @if (!authService.isLoggedIn()) {
+    <form
+      #loginForm="ngForm"
+      class="form-inline my-2 my-lg-0"
+      (ngSubmit)="login()"
+    >
+      <input
+        class="form-control mr-sm-2"
+        type="text"
+        name="username"
+        placeholder="اسم المستخدم"
+        required
+        [(ngModel)]="model.username"
+      />
+
+      <input
+        class="form-control mr-sm-2"
+        type="password"
+        name="password"
+        placeholder="كلمة المرور"
+        required
+        [(ngModel)]="model.password"
+      />
+
+      <button
+        [disabled]="!loginForm.valid"
+        class="btn btn-success my-2 my-sm-0"
+        type="submit"
+      >
+        تسجيل الدخول
+      </button>
+    </form>
+  }
+</nav>
